@@ -9,7 +9,7 @@ from api.v1.views import app_views
 @app_views.route('/amenities/<amenity_id>', methods=['GET'],
                  strict_slashes=False)
 def get_amenities(amenity_id=None):
-    """Endpoint that handles all amenties object or get request to an obj by ID"""
+    """Endpoint tha handles amenties object or get req to an obj by ID"""
     amenities = storage.all('Amenity').values()
     if amenity_id is None:
         amenities_list = [amenity.to_dict() for amenity in amenities]
