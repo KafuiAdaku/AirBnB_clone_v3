@@ -69,7 +69,7 @@ class DBStorage:
         Base.metadata.create_all(self.__engine)
         sess_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(sess_factory)
-        self.__session = Session
+        self.__session = Session # missing paranthesis
 
     def close(self):
         """call remove() method on the private session attribute"""
@@ -78,14 +78,12 @@ class DBStorage:
     def get(self, cls, id):
         """Retrives an  object"""
         if isinstance(cls, str) and cls in classes:
-            obj = "{}.{}".format(cls, id)
-            all_objs = self.all(cls)
-            return all_objs[obj] if obj in all_objs else None;
+            obj = self.__session.query(cls).filter(cls.id == id).first()
+            if obj:
+                return obj
 
     def count(self, cls=None):
         """Returns the number of objects in storage"""
         if cls is None:
             return len(self.all())
-        if cls in classes:
-            return len(self.all(cls))
-        return None
+        return len(self.all(cls))
