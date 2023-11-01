@@ -63,5 +63,5 @@ def update_state(state_id):
     for k,v in request_obj.items():
         if k not in ["id", "created_at", "updated_at"]:
             setattr(state_obj, k, v)
-    storage.save()
+    state_obj.save()
     return jsonify(state_obj.to_dict()), 200
