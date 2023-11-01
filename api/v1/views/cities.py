@@ -44,6 +44,9 @@ def delete_city(city_id):
                 methods=["POST"], strict_slashes=False)
 def create_city(state_id):
     """Creates a `Cityy` object"""
+    state = storage.get(State, state_id)
+    if state is None:
+        abort(404)
     request_obj = request.get_json()
     if request_obj is None:
         abort(404, "Not a JSON")
@@ -51,6 +54,7 @@ def create_city(state_id):
         abort(404, "Missing name")
 
     new_city = City(**request_obj)
+    new_city.state_id = state_id
     storage.new(new_city)
     storage.save()
 
