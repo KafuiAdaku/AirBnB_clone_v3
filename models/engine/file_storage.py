@@ -71,7 +71,7 @@ class FileStorage:
 
     def get(self, cls, id):
         """Retrieves an object"""
-        if isinstance(cls, str) and cls in classes:
+        if isinstance(cls, str):
             return self.all(cls)["{}.{}".format(cls, id)]
         return None
 
