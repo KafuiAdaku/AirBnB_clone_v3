@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """View functions for `User` objects"""
 from models import storage
-from model.user import User
+from models.user import User
 from api.v1.views import app_views
 from flask import Flask, jsonify, make_response, request
 
@@ -9,12 +9,12 @@ from flask import Flask, jsonify, make_response, request
 @app_views.route("/users/<user_id>", methods=["GET"], strict_slashes=False)
 def get_users():
     """Retrieves all `User` objects"""
-    if not user_id
-        users = storage.all(User)
+    if not user_id:
+        users = storage.all("User")
         list_users = [user.to_dict for user in users]
         return jsonify(list_users)
 
-    user = storage.get(User, user_id)
+    user = storage.get("User", user_id)
     if user is None:
         abort(404)
     return jsonify(user.to_dict())
@@ -23,7 +23,7 @@ def get_users():
 @app_views.route("/users/<user_id>", methods=["DELETE"], strict_slashes=False)
 def delete_user(user_id):
     """Deletes a user"""
-    user = storage.get(User, user_id)
+    user = storage.get("User", user_id)
     if user is None:
         abort(404)
     storage.delete(user)
@@ -49,7 +49,7 @@ def create_user():
 @app_views.route("/users/<user_id>", methods=["PUT"], strict_slashes=False)
 def update_user(user_id):
     """Updates a `User` object"""
-    user = storage.get(User, user_id)
+    user = storage.get("User", user_id)
     if user is None:
         abort(404)
     request_obj = request.get_json()

@@ -2,7 +2,6 @@
 """View functions for `City` object"""
 from models import storage
 from models.city import City
-from models.state import State
 from api.v1.views import app_views
 from flask import abort, make_response, Flask, jsonify, request
 
@@ -10,7 +9,7 @@ from flask import abort, make_response, Flask, jsonify, request
                 methods=["GET"], strict_slashes=False)
 def get_cities(state_id):
     """Retrieves all cities in a state"""
-    state = storage.get(State, state_id)
+    state = storage.get("State", state_id)
     if state is None:
         abort(404)
 
@@ -24,7 +23,7 @@ def get_cities(state_id):
 @app_views.route("/cities/<city_id>", methods=["GET"], strict_slashes=False)
 def get_city(city_id):
     """Retieives a city object"""
-    city = storage.get(City, city_id)
+    city = storage.get("City", city_id)
     if city is None:
         abort(404)
     return jsonify(city.to_dict())
@@ -33,7 +32,7 @@ def get_city(city_id):
 @app_views.route("/cities/<city_id>", methods=["DELETE"], strict_slashes=False)
 def delete_city(city_id):
     """Deletes a city object"""
-    city = storage.get(City, city_id)
+    city = storage.get("City", city_id)
     if city is None:
         abort (404)
     storage.delete(city)
@@ -45,7 +44,7 @@ def delete_city(city_id):
                 methods=["POST"], strict_slashes=False)
 def create_city(state_id):
     """Creates a `Cityy` object"""
-    state = storage.get(State, state_id)
+    state = storage.get("State", state_id)
     if state is None:
         abort(404)
     request_obj = request.get_json()
@@ -56,8 +55,7 @@ def create_city(state_id):
 
     new_city = City(**request_obj)
     new_city.state_id = state_id
-    storage.new(new_city)
-    storage.save()
+    new_city.save()
 
     return jsonify(new_city.to_dict()), 201
 
@@ -66,7 +64,7 @@ def create_city(state_id):
         methods=["PUT"], strict_slashes=False)
 def update_city(city_id):
     """updates a `City` object"""
-    city = storage.get(City, city_id)
+    city = storage.get("City", city_id)
     if city is None:
         abort(404)
     request_obj = request.get_json()

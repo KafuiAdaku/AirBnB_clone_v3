@@ -10,12 +10,11 @@ from flask import Flask, jsonify, make_response, abort, request
 def get_states(state_id=None):
     """Retrieves all `State` objects"""
     if state_id is None:
-        all_states = storage.all(State).values()
+        all_states = storage.all("State").values()
         list_obj = [state.to_dict() for state in all_states]
         return jsonify(list_obj)
 
-    obj = storage.get(State, state_id)
-    # print(obj)
+    obj = storage.get("State", state_id)
     if obj is not None:
         return jsonify(obj.to_dict())
     else:
@@ -26,7 +25,7 @@ def get_states(state_id=None):
                 strict_slashes=False)
 def del_state(state_id):
     """Deletes a state object by its state ID"""
-    del_obj = storage.get(State, state_id)
+    del_obj = storage.get("State", state_id)
     if del_obj is not None:
         storage.delete(del_obj)
         storage.save()
@@ -53,7 +52,7 @@ def create_state():
 @app_views.route("/states/<state_id>", methods=["PUT"], strict_slashes=False)
 def update_state(state_id):
     """Updates a state object"""
-    state_obj = storage.get(State, state_id)
+    state_obj = storage.get("State", state_id)
     if not state_obj:
         abort(404)
 
