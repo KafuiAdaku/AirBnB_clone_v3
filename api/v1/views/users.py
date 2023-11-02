@@ -3,20 +3,20 @@
 from models import storage
 from models.user import User
 from api.v1.views import app_views
-from flask import Flask, jsonify, make_response, request
+from flask import abort, Flask, jsonify, make_response, request
 
 @app_views.route("/users", methods=["GET"], strict_slashes=False)
 @app_views.route("/users/<user_id>", methods=["GET"], strict_slashes=False)
-def get_users():
+def get_users(user_id=None):
     """Retrieves all `User` objects"""
-    if not user_id:
+    if user_id is None:
         users = storage.all("User")
-        list_users = [user.to_dict for user in users]
+        list_users = [user.to_dict() for user in users.values()]
         return jsonify(list_users)
 
     user = storage.get("User", user_id)
     if user is None:
-        abort(404)
+        return abort(404)
     return jsonify(user.to_dict())
 
 
@@ -25,7 +25,7 @@ def delete_user(user_id):
     """Deletes a user"""
     user = storage.get("User", user_id)
     if user is None:
-        abort(404)
+        return abort(404)
     storage.delete(user)
     storage.save()
     return make_response(jsonify({}), 200)
@@ -36,14 +36,14 @@ def create_user():
     """Creates a new `User` obect"""
     request_obj = request.get_json()
     if request_obj is None:
-        abort(400, "Not a JSON")
+        return abort(400, "Not a JSON")
     if "email" not in request_obj:
-        abort(400, "Missing email")
+        return abort(400, "Missing email")
     if "password" not in request_obj:
-        abort(400, "Missing password")
+        return abort(400, "Missing password")
     user = User(**request_obj)
     user.save()
-    return make_response(jsonify(user.to_dict), 201)
+    return make_response(jsonify(user.to_dict()), 201)
 
 
 @app_views.route("/users/<user_id>", methods=["PUT"], strict_slashes=False)
@@ -51,12 +51,12 @@ def update_user(user_id):
     """Updates a `User` object"""
     user = storage.get("User", user_id)
     if user is None:
-        abort(404)
+        return abort(404)
     request_obj = request.get_json()
     if request_obj is None:
-        abort(404, "Not a JSON")
+        return abort(404, "Not a JSON")
 
-    for k,v in request_obj:
+    for k,v in request_obj.items():
         if k not in ["id", "email", "created_at", "updated_at"]:
             setattr(user, k, v)
     user.save()
